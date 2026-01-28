@@ -17,5 +17,12 @@ int main () {
 }
 
 int zeros(int n) {
+    if (n == 0)
+        return 0;
+    else 
+        return n/5 + zeros(n/5);
+}
+
+int isPalindrome(char *str, int left, int right) {
     
 }
