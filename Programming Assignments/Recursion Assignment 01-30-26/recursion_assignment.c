@@ -5,53 +5,13 @@
 */
 
 int zeros(int n);
-int zeros1(int n);
 int isPalindrome(char *str, int left, int right);
-int isPalindrome1(char *str, int left, int right);
 int findMax(int arr[], int start, int end);
 int findMin(int arr[], int start, int end);
 int searchRecord(int numbers[], int low, int high, int value);
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 int main () {
-
-    // Problem 1: Testing Given Code and My Recursion
-    int stopNumber = 1;
-    while(stopNumber != 0)
-    {
-        int res;
-
-        printf("Type in a number: ");
-        scanf("%d", &res);
-
-        stopNumber = res;
-
-        int out = zeros(res);
-        int out1 = zeros1(res);
-
-        printf("%d %d\n", out, out1);
-    }
-
-    char *palindrome = malloc(100 * sizeof(char));
-
-    int stop = 1;
-    while(stop != 0) {
-        int res;
-        int res1;
-
-        printf("Type in a palindrome: ");
-        scanf("%s", palindrome);
-
-        res = isPalindrome(palindrome, 0, strlen(palindrome)-1);
-        res1 = isPalindrome1(palindrome, 0, strlen(palindrome)-1);
-
-        printf("%d %d\n", res, res1);
-    }
-
-
+    return 0;
 }
 
 // My Recursion Code
@@ -62,37 +22,60 @@ int zeros(int n) {
         return n/5 + zeros(n/5);
 }
 
-// Given Test Code
-int zeros1(int n) {
-    int res = 0;
-    while (n != 0) {
-        res += n / 5;
-        n /= 5;
-    }   
-    return res;
-}
-
 //My Recursion Code
 int isPalindrome(char *str, int left, int right) {
     if(left >= right)
         return 1;
     
-    if(str[left] != right)
+    if(str[left] != str[right])
         return 0;
 
     return isPalindrome(str, left + 1, right - 1);
 }
 
-//Test Code I Made
-int isPalindrome1(char *str, int left, int right) {
-    left = 0;
-    right = strlen(str) - 1;
+//The recursive function for findMax
+int findMax(int arr[], int start, int end) {
+    int max = 0;
+    if(start == end) {
+        return arr[start];
+    } 
 
-    while (left < right) {
-        if(str[left] != str[right])
-            return 0;
-        left++;
-        right--;
+    int maxOfRest = findMax(arr, start + 1, end);
+
+    if(arr[start] > maxOfRest) {
+        return arr[start];
+    } else {
+        return maxOfRest;
     }
-    return 1;
+}
+
+int findMin(int arr[], int start, int end) {
+    if (start == end) {
+        return arr[start];
+    }
+
+    int minOfRest = findMin(arr, start + 1, end);
+
+    if(arr[start] < minOfRest) {
+        return arr[start];
+    } else {
+        return minOfRest;
+    }
+}
+
+int searchRecord(int numbers[], int low, int high, int value) {
+    if (low > high) {
+        return -1;
+    }
+
+    int middleIndex = low + (high - low) / 2;
+    if(numbers[middleIndex] == value) {
+        return middleIndex;
+    }
+
+    if (numbers[middleIndex] > value) {
+        return searchRecord(numbers, low, middleIndex - 1, value);
+    } else {
+        return searchRecord(numbers, middleIndex + 1, high, value);
+    }
 }
