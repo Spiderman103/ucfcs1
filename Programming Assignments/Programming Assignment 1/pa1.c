@@ -313,10 +313,11 @@ void removeCatFromKennel(Kennel *k, Cat *cat) {
     Cat **temp = (Cat **)realloc(k->cats, k->occupancy * sizeof(Cat *));
     if (temp != NULL) {
       k->cats = temp;
-    } else {
-      free(k->cats);
-      k->cats = NULL;
-    }
+    } 
+  }
+  else {
+    free(k->cats);
+    k->cats = NULL;
   }
 }
 
@@ -333,19 +334,21 @@ void runQueries(CatStore *s, char **dictionary, int breedCount, int numQueries) 
     if (queryType == 1) {
       char breed[100];
       scanf("%s", breed);
-
+    
       int catFound = 0;
       for (int j = 0; j < s->numKennels; ++j) {
         for (int k = 0; k < s->kennels[j].occupancy; ++k) {
           if (strcmp(s->kennels[j].cats[k]->breed, breed) == 0) {
-            printf("%s\n", s->kennels[j].cats[k]->name);
+            printf("%s %.2lf %d %s\n", s->kennels[j].cats[k]->name, s->kennels[j].cats[k]->weight, s->kennels[j].cats[k]->age);
+            printf("%s %s\n", s->kennels[j].location, STATUS_CAT[s->kennels[j].cats[k]->status]);
             catFound = 1;
           }
         }
       }
       if (catFound == 0) {
-        printf("No cats with breed %s\n", breed);
-      } else if (queryType == 2) {
+        printf("No cat with breed %s\n", breed);
+      } 
+    } else if (queryType == 2) {
         int newStatus;
         char name[100];
         scanf("%d %s", &newStatus, name);
@@ -371,7 +374,7 @@ void runQueries(CatStore *s, char **dictionary, int breedCount, int numQueries) 
           scanf("%s %s", name, catLocation);
 
           Cat *cat = getCatByName(s, name);
-          if (cat != NULL) {
+          if (cat == NULL) {
             continue;
           }
 
@@ -411,7 +414,6 @@ void runQueries(CatStore *s, char **dictionary, int breedCount, int numQueries) 
       }
     }
   }
-}
 
 /*
  * freeBreeds function - frees all memory used
