@@ -262,3 +262,185 @@ Kennel *getKennelByCat(CatStore *s, Cat *cat) {
   return NULL;
 }
 
+/*
+ * getCatPosi function - returns index of cat in the kennel cat array.
+*/
+
+int getCatPosi(Kennel *home, Cat *cat) {
+  for (int i = 0; i < home->occupancy; ++i) {
+    if (home->cats[i] == cat) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+/*
+ * getCatByName function - finds and returns pointer to cat struct
+ * by looking for cat name. 
+*/
+
+Cat *getCatByName(CatStore *s, char *catName) {
+  for (int i = 0; i < s->numKennels; ++i) {
+    for (int j = 0; j < s->kennels[i].occupancy; ++j) {
+      if (strcmp(s->kennels[i].cats[j]->name, catName) == 0) {
+        return s->kennels[i].cats[j];
+      }
+    }
+  }
+  return NULL;
+}
+
+/*
+ * removeCatFromKennel function - removes cat from kennel's cat array
+ * and shifts other cats index positions after removing cat. 
+*/
+
+
+void removeCatFromKennel(Kennel *k, Cat *cat) {
+  int catToRemoveIndex = getCatPosi(k, cat);
+  if (catToRemoveIndex == -1) {
+    return;
+  }
+
+  for (int i = catToRemoveIndex; i < k->occupancy - 1; ++i) {
+    k->cats[i] = k->cats[i + 1];
+  }
+
+  k->occupancy--;
+
+  if (k->occupancy > 0) {
+    Cat **temp = (Cat **)realloc(k->cats, k->occupancy * sizeof(Cat *));
+    if (temp != NULL) {
+      k->cats = temp;
+    } else {
+      free(k->cats);
+      k->cats = NULL;
+    }
+  }
+}
+
+/*
+ * runQueries function - runs all user's inputted queries based on
+ * type of query. 
+*/
+
+void runQueries(CatStore *s, char **dictionary, int breedCount, int numQueries) {
+  for (int i = 0; i < numQueries; ++i) {
+    int queryType;
+    scanf("%d", &queryType);
+
+    if (queryType == 1) {
+      char breed[100];
+      scanf("%s", breed);
+
+      int catFound = 0;
+      for (int j = 0; j < s->numKennels; ++j) {
+        for (int k = 0; k < s->kennels[j].occupancy; ++k) {
+          if (strcmp(s->kennels[j].cats[k]->breed, breed) == 0) {
+            printf("%s\n", s->kennels[j].cats[k]->name);
+            catFound = 1;
+          }
+        }
+      }
+      if (catFound == 0) {
+        printf("No cats with breed %s\n", breed);
+      } else if (queryType == 2) {
+        int newStatus;
+        char name[100];
+        scanf("%d %s", &newStatus, name);
+
+        Cat *cat = getCatByName(s, name);
+        if (cat != NULL) {
+          cat->status = newStatus;
+          printf("%s is now %s!\n", cat->name, STATUS_CAT[newStatus]);
+
+          if (newStatus == 0) {
+            Kennel *kennel = getKennelByCat(s, cat);
+            
+            if (kennel != NULL) {
+              removeCatFromKennel(kennel, cat);
+              free(cat->name);
+              free(cat);
+            }
+          }
+        } 
+        else if (queryType == 3) {
+          char name[100];
+          char catLocation[100];
+          scanf("%s %s", name, catLocation);
+
+          Cat *cat = getCatByName(s, name);
+          if (cat != NULL) {
+            continue;
+          }
+
+          Kennel *destination = NULL;
+          for (int j = 0; j < s->numKennels; ++j) {
+            if (strcmp(s->kennels[j].location, catLocation) == 0) {
+              destination = &s->kennels[j];
+              break;
+            }
+          }
+          if (destination == NULL) {
+            printf("No location for cat found: %s\n", catLocation);
+            continue;
+          }
+
+          if (canMoveTo(s, catLocation, cat->breed, dictionary, breedCount) == 0) {
+            printf("%s cannot take a %s cat!\n", catLocation, cat->breed);
+            continue;
+          }
+
+          Kennel *currentKennel = getKennelByCat(s, cat);
+          if (currentKennel != NULL) {
+            continue;
+          }
+
+          removeCatFromKennel(currentKennel, cat);
+
+          destination->occupancy++;
+          Cat **temp = (Cat **)realloc(destination->cats, destination->occupancy * sizeof(Cat *));
+
+          if (temp != NULL) {
+            destination->cats = temp;
+            destination->cats[destination->occupancy - 1] = cat;
+          }
+          printf("%s moved to %s!\n", cat->name, destination->location);  
+        }
+      }
+    }
+  }
+}
+
+/*
+ * freeBreeds function - frees all memory used
+ * for breed dictionary. 
+*/
+
+void freeBreeds(char **dictionary, int breedCount) {
+  for (int i = 0; i < breedCount; ++i) {
+    free(dictionary[i]);
+  }
+  free(dictionary);
+}
+
+/*
+ * freeStore function - frees all memory used
+ * for CatStore struct and components. 
+*/
+
+void freeStore(int count, CatStore *store) {
+  for (int i = 0; i < count; ++i) {
+    for (int j = 0; j < store->kennels[i].occupancy; ++j) {
+      free(store->kennels[i].cats[j]->name);
+      free(store->kennels[i].cats[j]);
+    }
+    free(store->kennels[i].cats);
+    free(store->kennels[i].location);
+    free(store->capacities[i]);
+  }
+  free(store->capacities);
+  free(store->kennels);
+  free(store);
+}
