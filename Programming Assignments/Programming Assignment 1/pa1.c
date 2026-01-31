@@ -47,6 +47,7 @@ void freeBreeds(char **dictionary, int breedCount);
 void freeStore(int count, CatStore *store);
 
 int main() {
+
   int breedCount;
   char **dictionary = readBreeds(&breedCount);
 
@@ -121,7 +122,7 @@ CatStore *createStore(int kennelCount, int breedCount, char ** dictionary) {
     }
   }
 
-  store-> kennels = createKennels(store->capacities, kennelCount, breedCount, dictionary);
+  store->kennels = createKennels(store->capacities, kennelCount, breedCount, dictionary);
   return store;
 
 } 
@@ -339,8 +340,7 @@ void runQueries(CatStore *s, char **dictionary, int breedCount, int numQueries) 
       for (int j = 0; j < s->numKennels; ++j) {
         for (int k = 0; k < s->kennels[j].occupancy; ++k) {
           if (strcmp(s->kennels[j].cats[k]->breed, breed) == 0) {
-            printf("%s %.2lf %d %s\n", s->kennels[j].cats[k]->name, s->kennels[j].cats[k]->weight, s->kennels[j].cats[k]->age);
-            printf("%s %s\n", s->kennels[j].location, STATUS_CAT[s->kennels[j].cats[k]->status]);
+            printf("%s %.2f %d %s %s\n", s->kennels[j].cats[k]->name, s->kennels[j].cats[k]->weight, s->kennels[j].cats[k]->age, s->kennels[j].location, STATUS_CAT[s->kennels[j].cats[k]->status]);
             catFound = 1;
           }
         }
@@ -348,7 +348,7 @@ void runQueries(CatStore *s, char **dictionary, int breedCount, int numQueries) 
       if (catFound == 0) {
         printf("No cat with breed %s\n", breed);
       } 
-    } else if (queryType == 2) {
+  } else if (queryType == 2) {
         int newStatus;
         char name[100];
         scanf("%d %s", &newStatus, name);
@@ -368,7 +368,8 @@ void runQueries(CatStore *s, char **dictionary, int breedCount, int numQueries) 
             }
           }
         } 
-        else if (queryType == 3) {
+       } 
+    else if (queryType == 3) {
           char name[100];
           char catLocation[100];
           scanf("%s %s", name, catLocation);
@@ -396,7 +397,7 @@ void runQueries(CatStore *s, char **dictionary, int breedCount, int numQueries) 
           }
 
           Kennel *currentKennel = getKennelByCat(s, cat);
-          if (currentKennel != NULL) {
+          if (currentKennel == NULL) {
             continue;
           }
 
@@ -409,11 +410,10 @@ void runQueries(CatStore *s, char **dictionary, int breedCount, int numQueries) 
             destination->cats = temp;
             destination->cats[destination->occupancy - 1] = cat;
           }
-          printf("%s moved to %s!\n", cat->name, destination->location);  
+          printf("%s moved successfully to %s\n", cat->name, destination->location);  
         }
       }
     }
-  }
 
 /*
  * freeBreeds function - frees all memory used
