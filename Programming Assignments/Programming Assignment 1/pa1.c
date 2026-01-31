@@ -38,7 +38,7 @@ Kennel* createKennels(int **constraints, int kennelCount, int breedCount, char *
 Cat **createCats(char **dictionary, int breedCount, int count);
 Cat* createSingleCat(char **dictionary, int breedCount);
 int canMoveTo(CatStore *s, char *location, char *breed, char **dictionary, int breedCount);
-Kennel *getKennelByCat(CatStore *s, Cat *cat);
+Kennel *getKennelByCat(CatStore *s, Cat *cat );
 int getCatPosi(Kennel *home, Cat *cat);
 Cat *getCatByName(CatStore *s, char *catName);
 void removeCatFromKennel(Kennel *k, Cat *cat);
