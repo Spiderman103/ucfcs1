@@ -16,6 +16,7 @@ int main() {
     int value = searchRecord(arr, 0, size - 1, 9);
 
     printf("Index of 9: %d\n", value);
+    
     return 0;
 }
 
@@ -25,7 +26,7 @@ int searchRecord(int numbers[], int low, int high, int value) {
     }
 
     int middleIndex = low + (high - low) / 2;
-    if(numbers[middleIndex] == value) {
+    if (numbers[middleIndex] == value) {
         return middleIndex;
     }
 
