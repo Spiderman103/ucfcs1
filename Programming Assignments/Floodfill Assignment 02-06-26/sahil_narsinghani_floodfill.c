@@ -43,25 +43,25 @@ int main(void) {
 
   scanf("%d %d", &M, &N);
 
-  for (int i = 0; i < M; i++) {
-    for (int j = 0; j < N; j++) {
-      scanf(" %c", &grid[i][j]);
+  for (int r = 0; r < M; ++r) {
+    for (int c = 0; c < N; ++c) {
+      scanf(" %c", &grid[r][c]);
     }
   }
 
   int regionCount = 0;
   int maxSize = 0;
 
-  for (int i = 0; i < M; i++) {
-    for (int j = 0; j < N; j++) {
-      if (grid[i][j] == 'F' || grid[i][j] == 'S') {
+  for (int r = 0; r < M; ++r) {
+    for (int c = 0; c < N; ++c) {
+      if (grid[r][c] == 'F' || grid[r][c] == 'S') {
         regionCount++;
 
-        flood_fill(grid, i, j, '.');
+        flood_fill(grid, r, c, '.');
 
         int size = 0;
-        for (int x = 0; x < M; x++) {
-          for (int y = 0; y < N; y++) {
+        for (int x = 0; x < M; ++x) {
+          for (int y = 0; y < N; ++y) {
             if (grid[x][y] == '.') {
               size++;
             }
@@ -70,6 +70,14 @@ int main(void) {
 
         if (size > maxSize) {
           maxSize = size;
+        }
+
+        for (int r = 0; r < M; ++r) {
+          for (int c = 0; c < N; ++c) {
+            if (grid[r][c] == '.') {
+              grid[r][c] = 'X'; // Mark as visited permanently
+            }
+          }
         }
       }
     }
