@@ -5,50 +5,78 @@
 */
 
 #include <stdio.h>
+#define SIZE 100
 
-int floodfillRec(char grid[][100], int x, int y, int M, int N);
-
-int main() {
-
-    int M;
-    int N;
-
-    char grid[100][100];
-
-    scanf("%d %d", &M, &N);
-
-    for (int i = 0; i < M; i++) {
-        for (int j = 0; j < N; j++) {
-            scanf(" %c", &grid[i][j]);
-        }
+// print the contents in the grid
+void display_grid(char grid[][SIZE], int r, int c) {
+  for (int i = 0; i < r; i++) {
+    for (int j = 0; j < c; j++) {
+      printf("%c", grid[i][j]);
     }
-
-    /*
-        count off here tmrw.
-    */
-
-    return 0;
+    printf("\n");
+  }
 }
 
-int floodfillRec(char grid[][100], int x, int y, int M, int N) {
-    if (x < 0 || y < 0) {
-        if (x >=M || y >= N) {
-            return 0;
+// recursive function
+void flood_fill_rec(char grid[][SIZE], int x, int y, char new_ch, char old_ch) {
+  if (x < 0 || y < 0 || x >= SIZE || y >= SIZE) // if it is out of the matrix
+    return;
+  if (grid[x][y] != old_ch) // if it is not the old char, no need to go to other direction for that cell
+    return;
+
+  grid[x][y] = new_ch;
+  flood_fill_rec(grid, x + 1, y, new_ch, old_ch);
+  flood_fill_rec(grid, x - 1, y, new_ch, old_ch);
+  flood_fill_rec(grid, x, y + 1, new_ch, old_ch);
+  flood_fill_rec(grid, x, y - 1, new_ch, old_ch);
+}
+
+// wrapper function
+void flood_fill(char grid[][SIZE], int x, int y, char ch) {
+  char old_char = grid[x][y];
+  flood_fill_rec(grid, x, y, ch, old_char);
+}
+
+int main(void) {
+  int M, N;
+  char grid[SIZE][SIZE];
+
+  scanf("%d %d", &M, &N);
+
+  for (int i = 0; i < M; i++) {
+    for (int j = 0; j < N; j++) {
+      scanf(" %c", &grid[i][j]);
+    }
+  }
+
+  int regionCount = 0;
+  int maxSize = 0;
+
+  for (int i = 0; i < M; i++) {
+    for (int j = 0; j < N; j++) {
+      if (grid[i][j] == 'F' || grid[i][j] == 'S') {
+        regionCount++;
+
+        flood_fill(grid, i, j, '.');
+
+        int size = 0;
+        for (int x = 0; x < M; x++) {
+          for (int y = 0; y < N; y++) {
+            if (grid[x][y] == '.') {
+              size++;
+            }
+          }
         }
+
+        if (size > maxSize) {
+          maxSize = size;
+        }
+      }
     }
+  }
 
-    if (grid[x][y] != 'F' && grid[x][y] != 'S') {
-        return 0;
-    }
+  printf("Frozen Regions: %d\n", regionCount);
+  printf("Largest Frozen Region Size: %d\n", maxSize);
 
-    grid[x][y] = '.';
-
-    int size = 1;
-
-    size += floodfillRec(grid, x + 1, y, M, N);
-    size += floodfillRec(grid, x - 1, y, M, N);
-    size += floodfillRec(grid, x, y + 1, M, N);
-    size += floodfillRec(grid, x, y - 1, M, N);
-
-    return size;
+  return 0;
 }
