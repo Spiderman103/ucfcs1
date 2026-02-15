@@ -1,0 +1,8 @@
+2 2
+Cat1 Breed1 80 80 80 80 80
+Cat2 Breed2 80 80 80 80 80
+Cat3 Breed3 80 80 80 80 80
+Cat4 Breed4 80 80 80 80 80
+2
+Cat1 Cat3 
+Cat4 Cat2

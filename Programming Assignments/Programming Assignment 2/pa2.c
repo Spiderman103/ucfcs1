@@ -1,4 +1,9 @@
 
+/*
+ * COP 3502H PA2
+ * This program is written by: Sahil Narsinghani
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,11 +36,13 @@ int synergyBonusApplies(int *permArr, int teamStart, int teamSize, int catPositi
 int rivalPenaltyApplies(int *permArr, int teamStart, int teamSize, int numRivals, int rivalPosition);
 
 int findCatIndex(char *name, int numCats);
-void permutation(int *permArr, int start, int end, int numCats, int teamSize, int numRivals);
+void permutation(int *permArr, int *usedArr, int start, int end, int numCats, int teamSize, int numRivals);
+float teamScore(int *permArr, int teamStart, int teamSize, int numRivals);
 
 int main() {
     int n;
-    int c; 
+    int c;
+    bestPermScore = 0;
 
     scanf("%d %d", &n, &c);
 
@@ -92,8 +99,6 @@ int main() {
         tracker[i] = (int *)malloc(c * sizeof(int));
     }
 
-    bestPermScore = 0;
-
     int *permArr = (int *)malloc(totalCats * sizeof(int));
     int *usedArr = (int *)malloc(totalCats * sizeof(int));
 
@@ -102,14 +107,51 @@ int main() {
         usedArr[i] = 0;
     }
 
-    permutation(permArr, 0, totalCats - 1, totalCats, c, numRivals);
-    printf("Best Teams Grouping Score: %.2f\n", bestPermScore);
+    permutation(permArr, usedArr, 0, totalCats - 1, totalCats, c, numRivals);
+    printf("Best Teams Grouping score: %.2f\n", bestPermScore);
+
+    float bestScore = -1;
+    int bestTeamIndexPos = 0;
+
+    for (int i = 0; i < n; ++i) {
+        float score = teamScore(tracker[i], 0, c, numRivals);
+        printf("Team %d:", i + 1);
+
+        for (int j = 0; j < c; ++j) {
+            printf(" %s", cats[tracker[i][j]].name);
+        }
+        printf(" %.2f\n", score);
+
+        if (score > bestScore) {
+            bestScore = score;
+            bestTeamIndexPos = i;
+        }
+    }
+
+    printf("Best Candidate:");
+    for (int j = 0; j < c; ++j) {
+        printf(" %s", cats[tracker[bestTeamIndexPos][j]].name);
+    }
+    printf("\n");
 
     for (int i = 0; i < totalCats; ++i) {
         free(cats[i].name);
         free(cats[i].breed);
     }
     free(cats);
+
+    if (rivals != NULL) {
+        free(rivals);
+    } 
+
+    for (int i = 0; i < n; ++i) {
+        free(tracker[i]);
+    }
+    free(tracker);
+    free(permArr);
+    free(usedArr);
+
+    return 0;
 }
 
 int countHighPerformersTraits(int *permArr, int teamStart, int teamSize, int catPosition, int traitPosition) {
@@ -158,11 +200,19 @@ int rivalPenaltyApplies(int *permArr, int teamStart, int teamSize, int numRivals
         return 0;
     }
 
-    int cat1Index = findCatIndex(rivals[rivalPosition].cat1->name, teamSize);
-    int cat2Index = findCatIndex(rivals[rivalPosition].cat2->name, teamSize);
+    for (int i = 0; i < teamSize - 1; ++i) {
+        int leftCatIndex = permArr[teamStart + i];
+        int rightCatIndex = permArr[teamStart + i + 1];
 
-    if (cat1Index != -1 && cat2Index != -1) {
-        return 1;
+        Cat *currentLeft = &cats[leftCatIndex];
+        Cat *currentRight = &cats[rightCatIndex];
+
+        Cat *rival1 = rivals[rivalPosition].cat1;
+        Cat *rival2 = rivals[rivalPosition].cat2;
+
+        if ((currentLeft == rival1 && currentRight == rival2) || (currentLeft == rival2 && currentRight == rival1)) {
+            return rivalPenaltyApplies(permArr, teamStart, teamSize, numRivals, rivalPosition + 1) + 1;
+        }
     }
 
     return rivalPenaltyApplies(permArr, teamStart, teamSize, numRivals, rivalPosition + 1);
@@ -177,12 +227,79 @@ int findCatIndex(char *name, int numCats) {
     return -1;
 }
 
-void permutation(int *permArr, int start, int end, int numCats, int teamSize, int numRivals) {
-    if (start == end) {
+void permutation(int *permArr, int *usedArr, int start, int end, int numCats, int teamSize, int numRivals) {
+    if (start > end) {
+        float total = 0;
+        int numTeams = numCats / teamSize;
+
+        for (int i = 0; i < numTeams; ++i) {
+            total += teamScore(permArr, i * teamSize, teamSize, numRivals);
+        }
+
+        if (total > bestPermScore) {
+            bestPermScore = total;
+
+            for (int i = 0; i < numTeams; ++i) {
+                for (int j = 0; j < teamSize; ++j) {
+                    tracker[i][j] = permArr[i * teamSize + j];
+                }
+            }
+        }
         return;
     }
 
-    for (int i = start; i <= end; ++i) {
-        permutation(permArr, start + 1, end, numCats, teamSize, numRivals);
+    for (int i = 0; i < numCats; ++i) {
+        if (!usedArr[i]) {
+            usedArr[i] = 1;
+            permArr[start] = i;
+
+            permutation(permArr, usedArr, start + 1, end, numCats, teamSize, numRivals);
+            usedArr[i] = 0;
+        }
     }
+}
+
+float teamScore(int *permArr, int teamStart, int teamSize, int numRivals) {
+    float baseScore = 0;
+    
+    for (int i = 0; i < teamSize; ++i) {
+        int catIndex = permArr[teamStart + i];
+        baseScore += cats[catIndex].baseScore;
+    }
+
+    baseScore = (float) baseScore / teamSize;
+    float score = baseScore;
+
+    int highPerformersCount = countHighPerformersTraits(permArr, teamStart, teamSize, 0, 0);
+    score += highPerformersCount * 5;
+
+    if (synergyBonusApplies(permArr, teamStart, teamSize, 0)) {
+        score += 30;
+    }
+
+    int allDifferentBreeds = 1;
+    for (int i = 0; i < teamSize; ++i) {
+      for (int j = i + 1; j < teamSize; ++j) {
+        if (strcmp(cats[permArr[teamStart + i]].breed, cats[permArr[teamStart + j]].breed) == 0) {
+          allDifferentBreeds = 0;
+        }
+      }
+    }
+
+    if (allDifferentBreeds) {
+        score += 10;
+    } else {
+        score -= 15;
+    }
+
+    for (int i = 0; i < teamSize; ++i) {
+      int catIndex = permArr[teamStart + i];
+      score += cats[catIndex].baseScore * (POSITION_BONUS[i] / 100.0);
+    }
+
+    if (numRivals > 0) {
+        score -= rivalPenaltyApplies(permArr, teamStart, teamSize, numRivals, 0) * 25;
+    }
+
+    return score;
 }

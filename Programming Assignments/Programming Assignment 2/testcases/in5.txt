@@ -1,0 +1,12 @@
+2 4
+Pluto Siamese 90 85 92 88 91
+Coco Bengal 78 82 75 80 77
+Ducky DSH 95 90 88 92 85
+Daisy Maine 70 65 60 55 50
+Ember Persian 91 87 93 86 90
+Frost Tabby 83 86 90 79 82
+Ginger Ragdoll 88 92 85 90 94
+Whisper Sphynx 60 55 70 65 58
+2
+Pluto Ducky
+Coco Ginger

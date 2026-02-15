@@ -1,0 +1,8 @@
+2 3
+Anthony Persian 95 90 88 92 85
+Anthonyy Bengal 91 87 93 86 90
+Anthonyyy Siamese 88 92 85 90 94
+Anthonyyyy Tabby 90 85 91 88 92
+Anthonyyyyy Ragdoll 86 93 90 87 91
+Anthonyyyyyy Maine 92 88 85 93 89
+0

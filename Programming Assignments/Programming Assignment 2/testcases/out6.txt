@@ -1,0 +1,4 @@
+Best Teams Grouping score: 884.00
+Team 1: Cat1 Cat2 442.00
+Team 2: Cat3 Cat4 442.00
+Best Candidate: Cat1 Cat2 
