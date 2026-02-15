@@ -34,7 +34,82 @@ int findCatIndex(char *name, int numCats);
 void permutation(int *permArr, int start, int end, int numCats, int teamSize, int numRivals);
 
 int main() {
+    int n;
+    int c; 
 
+    scanf("%d %d", &n, &c);
+
+    int totalCats = n * c;
+
+    cats = (Cat *)malloc(totalCats * sizeof(Cat));
+
+    char tempName[MAX_STR];
+    char tempBreed[MAX_STR];
+
+    for (int i = 0; i < totalCats; ++i) {
+
+        scanf("%s %s", tempName, tempBreed);
+
+        cats[i].name = (char *)malloc((strlen(tempName) + 1) * sizeof(char));
+        cats[i].breed = (char *)malloc((strlen(tempBreed) + 1) * sizeof(char));
+        strcpy(cats[i].name, tempName);
+        strcpy(cats[i].breed, tempBreed);
+
+        int scoreSum = 0;
+        for (int j = 0; j < MAX_SCORES; ++j) {
+            scanf("%d", &cats[i].scores[j]);
+            scoreSum += cats[i].scores[j];
+        }
+        cats[i].baseScore = scoreSum;
+    }
+
+    int numRivals;
+    scanf("%d", &numRivals);
+
+    if (numRivals > 0) {
+        rivals = (Rivals *)malloc(numRivals * sizeof(Rivals));
+
+        char cat1Name[MAX_STR];
+        char cat2Name[MAX_STR];
+
+        for (int i = 0; i < numRivals; ++i) {
+            scanf("%s %s", cat1Name, cat2Name);
+
+            int cat1Index = findCatIndex(cat1Name, totalCats);
+            int cat2Index = findCatIndex(cat2Name, totalCats);
+
+            if (cat1Index != -1 && cat2Index != -1) {
+                rivals[i].cat1 = &cats[cat1Index];
+                rivals[i].cat2 = &cats[cat2Index];
+            }
+        }
+    } else {
+        rivals = NULL;
+    }
+
+    tracker = (int **)malloc(n * sizeof(int *));
+    for (int i = 0; i < n; ++i) {
+        tracker[i] = (int *)malloc(c * sizeof(int));
+    }
+
+    bestPermScore = 0;
+
+    int *permArr = (int *)malloc(totalCats * sizeof(int));
+    int *usedArr = (int *)malloc(totalCats * sizeof(int));
+
+    for (int i = 0; i < totalCats; ++i) {
+        permArr[i] = i;
+        usedArr[i] = 0;
+    }
+
+    permutation(permArr, 0, totalCats - 1, totalCats, c, numRivals);
+    printf("Best Teams Grouping Score: %.2f\n", bestPermScore);
+
+    for (int i = 0; i < totalCats; ++i) {
+        free(cats[i].name);
+        free(cats[i].breed);
+    }
+    free(cats);
 }
 
 int countHighPerformersTraits(int *permArr, int teamStart, int teamSize, int catPosition, int traitPosition) {
