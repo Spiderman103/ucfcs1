@@ -68,65 +68,80 @@ int main() {
         newCat->name = (char *)malloc((strlen(buffer) + 1) * sizeof(char));
         strcpy(newCat->name, buffer);
         enqueue(&waitQueue, newCat);
+    }
 
-        int unoBusy = -1;
-        int dosBusy = -1;
+    int unoBusy = -1;
+    int dosBusy = -1;
 
-        int unoIsFree = 1;
-        int dosIsFree = 1;
+    int unoIsFree = 1;
+    int dosIsFree = 1;
 
-        for (int i = 0; i < 480; ++i) {
-            if (isEmptyQueue(&waitQueue)) {
-                break;
-            }
-            
-            if (unoBusy == -1 || i >= unoBusy) {
-                unoIsFree = 1;
-            } else {
-                unoIsFree = 0;
-            }
+    for (int i = 0; i < 480; ++i) {
+      if (isEmptyQueue(&waitQueue)) {
+        break;
+      }
 
-            if (dosBusy == -1 || i >= dosBusy) {
-                dosIsFree = 1;
-            } else {
-                dosIsFree = 0;
-            }
+      if (unoBusy == -1 || i >= unoBusy) {
+        unoIsFree = 1;
+      } else {
+        unoIsFree = 0;
+      }
 
-            if (unoIsFree) {
-                Cat *frontCat = peek(&waitQueue);
+      if (dosBusy == -1 || i >= dosBusy) {
+        dosIsFree = 1;
+      } else {
+        dosIsFree = 0;
+      }
 
-                if (frontCat != NULL && frontCat->arrival <= i) {
-                    Cat *dequeuedCat = dequeue(&waitQueue);
-                    printf("Doctor Uno treated %s at %d\n", dequeuedCat->name, i);
+      if (unoIsFree) {
+        Cat *frontCat = peek(&waitQueue);
 
-                    unoBusy = i + dequeuedCat->duration;
-                    free(dequeuedCat->name);
-                    free(dequeuedCat);
-                }
-            }
+        if (frontCat != NULL && frontCat->arrival <= i) {
+          Cat *dequeuedCat = dequeue(&waitQueue);
 
-            if (isEmptyQueue(&waitQueue)) {
-              break;
-            }
+          if (i + frontCat->duration > 480) {
+            printf("Cannot accommdate %s\n", dequeuedCat->name);
 
-            if (dosIsFree) {
-              Cat *frontCat = peek(&waitQueue);
-
-              if (frontCat != NULL && frontCat->arrival <= i) {
-                Cat *dequeuedCat = dequeue(&waitQueue);
-                printf("Doctor Dos treated %s at %d\n", dequeuedCat->name, i);
-
-                dosBusy = i + dequeuedCat->duration;
-                free(dequeuedCat->name);
-                free(dequeuedCat);
-              }
-            }
+            unoBusy = i + dequeuedCat->duration;
+            free(dequeuedCat->name);
+            free(dequeuedCat);
+          } else {
+            printf("Doctor Uno treated %s at %d\n", dequeuedCat->name, i);
+            unoBusy = i + dequeuedCat->duration;
+            push(&stack, dequeuedCat);
+            free(dequeuedCat->name);
+            free(dequeuedCat);
+          }
         }
+      }
+
+      if (isEmptyQueue(&waitQueue)) {
+        break;
+      }
+
+      if (dosIsFree) {
+        Cat *frontCat = peek(&waitQueue);
+
+        if (frontCat != NULL && frontCat->arrival <= i) {
+          Cat *dequeuedCat = dequeue(&waitQueue);
+
+          if (i + dequeuedCat->duration > 480) {
+            printf("Cannot accommodate s\n", dequeuedCat->name);
+            dosBusy = i + dequeuedCat->duration;
+            free(dequeuedCat->name);
+            free(dequeuedCat);
+          }
+
+          printf("Doctor Dos treated %s at %d\n", dequeuedCat->name, i);
+          dosBusy = i + dequeuedCat->duration;
+          push(&stack, dequeuedCat);
+        }
+      }
     }
 
     while (!isEmptyQueue(&waitQueue)) {
         Cat *remainingCat = dequeue(&waitQueue);
-        printf("Cannot accomodate %s\n", remainingCat->name);
+        printf("Cannot accommodate %s\n", remainingCat->name);
         free(remainingCat->name);
         free(remainingCat);
     }
@@ -134,7 +149,7 @@ int main() {
     if (isEmptyStack(&stack)) {
         printf("No Exposed Cats\n");
     } else {
-        printf("Exposed Cats:\n");
+        printf("Exposed Cats\n");
         while (!isEmptyStack(&stack)) {
             Cat *cat = pop(&stack);
             printf("%s\n", cat->name);
