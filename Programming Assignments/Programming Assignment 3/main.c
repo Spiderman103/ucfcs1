@@ -48,6 +48,12 @@ int main() {
 
     int input;
 
+    int unoBusy = -1;
+    int dosBusy = -1;
+
+    int unoIsFree = 0;
+    int dosIsFree = 0;
+
     while (scanf("%d", &input) != EOF) {
         if (input == -1) {
             break;
@@ -70,11 +76,7 @@ int main() {
         enqueue(&waitQueue, newCat);
     }
 
-    int unoBusy = -1;
-    int dosBusy = -1;
 
-    int unoIsFree = 1;
-    int dosIsFree = 1;
 
     for (int i = 0; i < 480; ++i) {
       if (isEmptyQueue(&waitQueue)) {
@@ -100,15 +102,13 @@ int main() {
           Cat *dequeuedCat = dequeue(&waitQueue);
 
           if (i + frontCat->duration > 480) {
-            printf("Cannot accommdate %s\n", dequeuedCat->name);
-
-            unoBusy = i + dequeuedCat->duration;
+            printf("Cannot accommodate %s\n", dequeuedCat->name);
             free(dequeuedCat->name);
             free(dequeuedCat);
           } else {
             printf("Doctor Uno treated %s at %d\n", dequeuedCat->name, i);
             unoBusy = i + dequeuedCat->duration;
-            push(&stack, dequeuedCat);
+
             free(dequeuedCat->name);
             free(dequeuedCat);
           }
@@ -126,15 +126,14 @@ int main() {
           Cat *dequeuedCat = dequeue(&waitQueue);
 
           if (i + dequeuedCat->duration > 480) {
-            printf("Cannot accommodate s\n", dequeuedCat->name);
-            dosBusy = i + dequeuedCat->duration;
+            printf("Cannot accommodate %s\n", dequeuedCat->name);
             free(dequeuedCat->name);
             free(dequeuedCat);
+          } else {
+            printf("Doctor Dos treated %s at %d\n", dequeuedCat->name, i);
+            dosBusy = i + dequeuedCat->duration;
+            push(&stack, dequeuedCat);
           }
-
-          printf("Doctor Dos treated %s at %d\n", dequeuedCat->name, i);
-          dosBusy = i + dequeuedCat->duration;
-          push(&stack, dequeuedCat);
         }
       }
     }
