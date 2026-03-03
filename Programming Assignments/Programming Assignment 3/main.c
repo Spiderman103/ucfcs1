@@ -26,12 +26,15 @@ typedef struct Stack_s {
     SLLNode *top;
 } Stack;
 
+
+// Queue helper functions
 void init(Queue *q);
 int isEmptyQueue(Queue *q);
 Cat *peek(Queue *q);
 void enqueue(Queue *q, Cat *c);
 Cat *dequeue(Queue *q);
 
+//Stack helper functions
 void initStack(Stack *s);
 int isEmptyStack(Stack *s);
 Cat *peekStack(Stack *s);
@@ -58,9 +61,9 @@ int main() {
             break;
         }
         
-        char buffer[26];
+        char arr[26];
         int inputDuration;
-        scanf("%s %d", buffer, &inputDuration);
+        scanf("%s %d", arr, &inputDuration);
 
         if (inputDuration == 0) {
             continue;
@@ -70,8 +73,8 @@ int main() {
         newCat->arrival = input;
         newCat->duration = inputDuration;
 
-        newCat->name = (char *)malloc((strlen(buffer) + 1) * sizeof(char));
-        strcpy(newCat->name, buffer);
+        newCat->name = (char *)malloc((strlen(arr) + 1) * sizeof(char));
+        strcpy(newCat->name, arr);
         enqueue(&waitQueue, newCat);
     }
 
