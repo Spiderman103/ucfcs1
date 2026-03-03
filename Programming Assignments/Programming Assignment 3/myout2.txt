@@ -1,0 +1,10 @@
+Doctor Uno treated Ava at 0
+Doctor Dos treated Bea at 1
+Doctor Uno treated Cora at 5
+Doctor Dos treated Demi at 5
+Doctor Dos treated Eli at 7
+Doctor Uno treated Fay at 8
+Exposed Cats
+Eli
+Demi
+Bea

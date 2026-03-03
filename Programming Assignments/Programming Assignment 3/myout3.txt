@@ -1,0 +1,5 @@
+Doctor Uno treated Cat0 at 0
+Doctor Uno treated Cat1 at 20
+Doctor Uno treated Cat2 at 40
+Doctor Uno treated Cat3 at 60
+No Exposed Cats

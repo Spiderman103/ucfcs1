@@ -1,0 +1,10 @@
+Doctor Uno treated P0 at 0
+Doctor Dos treated P1 at 1
+Doctor Uno treated P2 at 159
+Doctor Dos treated P3 at 160
+Doctor Uno treated P4 at 318
+Doctor Dos treated P5 at 319
+Exposed Cats
+P5
+P3
+P1

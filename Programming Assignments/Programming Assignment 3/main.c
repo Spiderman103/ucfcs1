@@ -13,11 +13,11 @@ typedef struct Cat_s {
 } Cat;
 
 typedef struct SLLNode_s {
-    Cat * cat; // Pointer to a cat
+    Cat *cat; // Pointer to a cat
     struct SLLNode_s *next;
 } SLLNode;
 
-typedef struct Queue_S {
+typedef struct Queue_s {
     SLLNode *front;
     SLLNode *back;
 } Queue;
@@ -58,7 +58,7 @@ int main() {
         if (input == -1) {
             break;
         }
-
+        
         char buffer[26];
         int inputDuration;
         scanf("%s %d", buffer, &inputDuration);

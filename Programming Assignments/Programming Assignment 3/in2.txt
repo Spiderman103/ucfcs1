@@ -1,0 +1,7 @@
+0 Ava 5
+1 Bea 4
+2 Cora 3
+3 Demi 2
+4 Eli 1
+5 Fay 1
+-1
