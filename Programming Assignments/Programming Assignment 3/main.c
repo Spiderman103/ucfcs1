@@ -47,14 +47,13 @@ int main() {
     initStack(&stack);
 
     int input;
-
-    int unoBusy = -1;
-    int dosBusy = -1;
+    int unoIsBusy = -1;
+    int dosIsBusy = -1;
 
     int unoIsFree = 0;
     int dosIsFree = 0;
 
-    while (scanf("%d", &input) != EOF) {
+    while (scanf("%d", &input) != -1) {
         if (input == -1) {
             break;
         }
@@ -83,13 +82,13 @@ int main() {
         break;
       }
 
-      if (unoBusy == -1 || i >= unoBusy) {
+      if (unoIsBusy == -1 || i >= unoIsBusy) {
         unoIsFree = 1;
       } else {
         unoIsFree = 0;
       }
 
-      if (dosBusy == -1 || i >= dosBusy) {
+      if (dosIsBusy == -1 || i >= dosIsBusy) {
         dosIsFree = 1;
       } else {
         dosIsFree = 0;
@@ -101,13 +100,14 @@ int main() {
         if (frontCat != NULL && frontCat->arrival <= i) {
           Cat *dequeuedCat = dequeue(&waitQueue);
 
-          if (i + frontCat->duration > 480) {
+          if ((i + frontCat->duration) > 480) {
             printf("Cannot accommodate %s\n", dequeuedCat->name);
             free(dequeuedCat->name);
             free(dequeuedCat);
+            
           } else {
             printf("Doctor Uno treated %s at %d\n", dequeuedCat->name, i);
-            unoBusy = i + dequeuedCat->duration;
+            unoIsBusy = i + dequeuedCat->duration;
 
             free(dequeuedCat->name);
             free(dequeuedCat);
@@ -125,13 +125,14 @@ int main() {
         if (frontCat != NULL && frontCat->arrival <= i) {
           Cat *dequeuedCat = dequeue(&waitQueue);
 
-          if (i + dequeuedCat->duration > 480) {
+          if ((i + dequeuedCat->duration) > 480) {
             printf("Cannot accommodate %s\n", dequeuedCat->name);
             free(dequeuedCat->name);
             free(dequeuedCat);
+            
           } else {
             printf("Doctor Dos treated %s at %d\n", dequeuedCat->name, i);
-            dosBusy = i + dequeuedCat->duration;
+            dosIsBusy = i + dequeuedCat->duration;
             push(&stack, dequeuedCat);
           }
         }
@@ -149,6 +150,7 @@ int main() {
         printf("No Exposed Cats\n");
     } else {
         printf("Exposed Cats\n");
+        
         while (!isEmptyStack(&stack)) {
             Cat *cat = pop(&stack);
             printf("%s\n", cat->name);
