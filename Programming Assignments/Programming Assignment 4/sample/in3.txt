@@ -1,0 +1,17 @@
+15
+mittens 10 9 6 10 8 7
+mochi 7 7 10 8 5 6
+whiskers 9 5 10 7 7 6
+cleo 10 10 5 7 10 8
+shadow 8 6 8 5 9 9
+nala 6 7 8 7 7 9
+poppy 10 10 6 10 9 10
+tiger 5 10 8 5 9 7
+luna 9 9 10 5 6 7
+pepper 10 9 7 8 9 7
+jasper 10 9 9 8 7 8
+willow 10 10 5 5 10 5
+oreo 6 7 5 7 10 5
+binx 5 8 5 8 9 10
+sable 5 10 6 6 9 5
+1
