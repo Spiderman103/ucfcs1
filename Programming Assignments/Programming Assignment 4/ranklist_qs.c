@@ -117,10 +117,10 @@ int partition(Cat **list, int low, int high, int traitIndex) {
     ++low;
 
     while (low <= high) {
-        while (low <= high && compareTo(list[low], list[high], traitIndex) <= 0) {
+        while (low <= high && compareTo(list[low], list[lowpos], traitIndex) <= 0) {
             ++low;
         }
-        while (low <= high && compareTo(list[lowpos], list[high], traitIndex) < 0) {
+        while (low <= high && compareTo(list[high], list[lowpos], traitIndex) < 0) {
             --high;;
         }
         if (low < high) {
