@@ -111,13 +111,13 @@ void swapCats(Cat **a, Cat **b) {
 
 int partition(Cat **list, int low, int high, int traitIndex) {
     int i = low + rand() % (high - low + 1);
-    swapCats(&list[i], &list[high]);
+    swapCats(&list[low], &list[i]);
 
     int lowpos = low;
     ++low;
 
     while (low <= high) {
-        while (low <= high && compareTo(list[low], list[lowpos], traitIndex) <= 0) {
+        while (low <= high && compareTo(list[low], list[lowpos], traitIndex) > 0) {
             ++low;
         }
         while (low <= high && compareTo(list[high], list[lowpos], traitIndex) < 0) {
