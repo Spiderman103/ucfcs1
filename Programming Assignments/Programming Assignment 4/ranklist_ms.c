@@ -21,11 +21,11 @@ typedef struct Cat {
     int scores[NUMTRAITS];
 } Cat;
 
-int compareTo(Cat *catOne, Cat *catTwo, int traitIndex);
-void insertionSort(Cat **list, int low, int high, int traitIndex);
-void merge(Cat **list, int left, int mid, int right, int traitIndex);
-void mergeSortRec(Cat **list, int low, int high, int traitIndex);
-void mergeSort(Cat **list, int numCats, int traitIndex);
+int compareTo(Cat *ptrC1, Cat *ptrC2, int key);
+void insertionSort(Cat **list, int low, int high, int key);
+void merge(Cat **list, int left, int mid, int high, int key);
+void mergeSortRec(Cat **list, int low, int high, int key);
+void mergeSort(Cat **list, int n, int key);
 
 int main() {
     int numCats = 0;
@@ -81,30 +81,30 @@ int main() {
     return 0;
 }
 
-int compareTo(Cat *catOne, Cat *catTwo, int traitIndex) {
-    if (catOne->scores[traitIndex] != catTwo->scores[traitIndex]) {
-        return catTwo->scores[traitIndex] - catOne->scores[traitIndex];
-    } else {
-        return strcmp(catOne->name, catTwo->name);
-    }
+int compareTo(Cat *ptrC1, Cat *ptrC2, int key) {
+  if (ptrC1->scores[key] != ptrC2->scores[key]) {
+    return ptrC2->scores[key] - ptrC1->scores[key];
+  } else {
+    return strcmp(ptrC1->name, ptrC2->name);
+  }
 }
 
-void insertionSort(Cat **list, int low, int high, int traitIndex) {
+void insertionSort(Cat **list, int low, int high, int key) {
     for (int i = low + 1; i <= high; ++i) {
         Cat *tempCat = list[i];
         int j = i - 1;
 
-        while (j >= low && compareTo(list[j], tempCat, traitIndex) > 0) {
-            list[j + 1] = list[j];
-            --j;
+        while (j >= low && compareTo(list[j], tempCat, key) > 0) {
+          list[j + 1] = list[j];
+          --j;
         }
         list[j + 1] = tempCat;
     }
 }
 
-void merge(Cat **list, int left, int mid, int right, int traitIndex) {
+void merge(Cat **list, int left, int mid, int high, int key) {
     int leftSize = mid - left + 1;
-    int rightSize = right - mid;
+    int rightSize = high - mid;
 
     Cat **leftArray = (Cat **)malloc(leftSize * sizeof(Cat *));
     Cat **rightArray = (Cat **)malloc(rightSize * sizeof(Cat *));
@@ -125,13 +125,13 @@ void merge(Cat **list, int left, int mid, int right, int traitIndex) {
     int k = left;
 
     while (i < leftSize && j < rightSize) {
-        if (compareTo(leftArray[i], rightArray[j], traitIndex) <= 0) {
-            list[k] = leftArray[i];
-            ++i;
-        } else {
-            list[k] = rightArray[j];
-            ++j;
-        }
+      if (compareTo(leftArray[i], rightArray[j], key) <= 0) {
+        list[k] = leftArray[i];
+        ++i;
+      } else {
+        list[k] = rightArray[j];
+        ++j;
+      }
         ++k;
     }
 
@@ -150,19 +150,19 @@ void merge(Cat **list, int left, int mid, int right, int traitIndex) {
     free(rightArray);
 }
 
-void mergeSortRec(Cat **list, int low, int high, int traitIndex) {
+void mergeSortRec(Cat **list, int low, int high, int key) {
     if (high - low + 1 <= BASECASESIZE) {
-        insertionSort(list, low, high, traitIndex);
-        return;
+      insertionSort(list, low, high, key);
+      return;
     }
     if (low < high) {
         int mid = low + (high - low) / 2;
-        mergeSortRec(list, low, mid, traitIndex);
-        mergeSortRec(list, mid + 1, high, traitIndex);
-        merge(list, low, mid, high, traitIndex);
+        mergeSortRec(list, low, mid, key);
+        mergeSortRec(list, mid + 1, high, key);
+        merge(list, low, mid, high, key);
     }
 }
 
-void mergeSort(Cat **list, int numCats, int traitIndex) {
-    mergeSortRec(list, 0, numCats - 1, traitIndex);
+void mergeSort(Cat **list, int n, int key) {
+  mergeSortRec(list, 0, n - 1, key);
 }

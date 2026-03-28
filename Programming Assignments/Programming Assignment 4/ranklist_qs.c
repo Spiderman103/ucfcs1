@@ -21,12 +21,12 @@ typedef struct Cat {
     int scores[NUMTRAITS];
 } Cat;
 
-int compareTo(Cat *catOne, Cat *catTwo, int traitIndex);
-void insertionSort(Cat **list, int low, int high, int traitIndex);
-void swapCats(Cat **firstCat, Cat **secondCat);
-int partition(Cat **list, int low, int high, int traitIndex);
-void quickSortRec(Cat **list, int low, int high, int traitIndex);
-void quickSort(Cat **list, int numCats, int traitIndex);
+int compareTo(Cat *ptrC1, Cat *ptrC2, int key);
+void insertionSort(Cat **list, int low, int high, int key);
+void swapCats(Cat **a, Cat **b);
+int partition(Cat **list, int low, int high, int key);
+void quickSortRec(Cat **list, int low, int high, int key);
+void quickSort(Cat **list, int n, int key);
 
 int main() {
     int numCats = 0;
@@ -82,20 +82,20 @@ int main() {
     return 0;
 }
 
-int compareTo(Cat *catOne, Cat *catTwo, int traitIndex) {
-    if (catOne->scores[traitIndex] != catTwo->scores[traitIndex]) {
-        return catTwo->scores[traitIndex] - catOne->scores[traitIndex];
+int compareTo(Cat *ptrC1, Cat *ptrC2, int key) {
+    if (ptrC1->scores[key] != ptrC2->scores[key]) {
+        return ptrC2->scores[key] - ptrC1->scores[key];
     } else {
-        return strcmp(catOne->name, catTwo->name);
+        return strcmp(ptrC1->name, ptrC2->name);
     }
 }
 
-void insertionSort(Cat **list, int low, int high, int traitIndex) {
+void insertionSort(Cat **list, int low, int high, int key) {
   for (int i = low + 1; i <= high; ++i) {
     Cat *tempCat = list[i];
     int j = i - 1;
 
-    while (j >= low && compareTo(list[j], tempCat, traitIndex) > 0) {
+    while (j >= low && compareTo(list[j], tempCat, key) > 0) {
       list[j + 1] = list[j];
       --j;;
     }
@@ -109,7 +109,7 @@ void swapCats(Cat **a, Cat **b) {
     *b = temp;
 }
 
-int partition(Cat **list, int low, int high, int traitIndex) {
+int partition(Cat **list, int low, int high, int key) {
     int i = low + rand() % (high - low + 1);
     swapCats(&list[low], &list[i]);
 
@@ -117,10 +117,10 @@ int partition(Cat **list, int low, int high, int traitIndex) {
     ++low;
 
     while (low <= high) {
-        while (low <= high && compareTo(list[low], list[lowpos], traitIndex) <= 0) {
+        while (low <= high && compareTo(list[low], list[lowpos], key) <= 0) {
             ++low;
         }
-        while (low <= high && compareTo(list[high], list[lowpos], traitIndex) > 0) {
+        while (low <= high && compareTo(list[high], list[lowpos], key) > 0) {
             --high;;
         }
         if (low < high) {
@@ -131,16 +131,16 @@ int partition(Cat **list, int low, int high, int traitIndex) {
     return high;
 }
 
-void quickSortRec(Cat **list, int low, int high, int traitIndex) {
+void quickSortRec(Cat **list, int low, int high, int key) {
     if (high - low + 1 <= BASECASESIZE) {
-        insertionSort(list, low, high, traitIndex);
+        insertionSort(list, low, high, key);
     } else {
-        int split = partition(list, low, high, traitIndex);
-        quickSortRec(list, low, split - 1, traitIndex);
-        quickSortRec(list, split + 1, high, traitIndex);
+        int split = partition(list, low, high, key);
+        quickSortRec(list, low, split - 1, key);
+        quickSortRec(list, split + 1, high, key);
     }
 }
 
-void quickSort(Cat **list, int numCats, int traitIndex) {
-    quickSortRec(list, 0, numCats - 1, traitIndex);
+void quickSort(Cat **list, int numCats, int key) {
+    quickSortRec(list, 0, numCats - 1, key);
 }
