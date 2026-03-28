@@ -114,7 +114,7 @@ void merge(Cat **list, int low, int mid, int high, int key) {
     }
 
     for (int i = 0; i < leftSize; ++i) {
-        leftArray[i] = list[left + i];
+        leftArray[i] = list[low + i];
     }
     for (int i = 0; i < rightSize; ++i) {
         rightArray[i] = list[mid + 1 + i];
