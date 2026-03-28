@@ -97,7 +97,7 @@ void insertionSort(Cat **list, int low, int high, int key) {
 
     while (j >= low && compareTo(list[j], tempCat, key) > 0) {
       list[j + 1] = list[j];
-      --j;;
+      --j;
     }
     list[j + 1] = tempCat;
   }
@@ -121,7 +121,7 @@ int partition(Cat **list, int low, int high, int key) {
             ++low;
         }
         while (low <= high && compareTo(list[high], list[lowpos], key) > 0) {
-            --high;;
+            --high;
         }
         if (low < high) {
             swapCats(&list[low], &list[high]);

@@ -23,7 +23,7 @@ typedef struct Cat {
 
 int compareTo(Cat *ptrC1, Cat *ptrC2, int key);
 void insertionSort(Cat **list, int low, int high, int key);
-void merge(Cat **list, int left, int mid, int high, int key);
+void merge(Cat **list, int low, int mid, int high, int key);
 void mergeSortRec(Cat **list, int low, int high, int key);
 void mergeSort(Cat **list, int n, int key);
 
@@ -102,8 +102,8 @@ void insertionSort(Cat **list, int low, int high, int key) {
     }
 }
 
-void merge(Cat **list, int left, int mid, int high, int key) {
-    int leftSize = mid - left + 1;
+void merge(Cat **list, int low, int mid, int high, int key) {
+    int leftSize = mid - low + 1;
     int rightSize = high - mid;
 
     Cat **leftArray = (Cat **)malloc(leftSize * sizeof(Cat *));
@@ -122,7 +122,7 @@ void merge(Cat **list, int left, int mid, int high, int key) {
 
     int i = 0;
     int j = 0;
-    int k = left;
+    int k = low;
 
     while (i < leftSize && j < rightSize) {
       if (compareTo(leftArray[i], rightArray[j], key) <= 0) {
