@@ -104,33 +104,43 @@ void insertionSort(Cat **list, int low, int high, int traitIndex) {
   }
 }
 
-void swapCats(Cat **firstCat, Cat **secondCat) {
-    Cat *temp = *firstCat;
-    *firstCat = *secondCat;
-    *secondCat = temp;
+void swapCats(Cat **a, Cat **b) {
+    Cat *temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
 int partition(Cat **list, int low, int high, int traitIndex) {
-    Cat *pivot = list[high];
-    int i = low - 1;
+    int i = low + rand() % (high - low + 1);
+    swapCats(&list[i], &list[high]);
 
-    for (int j = low; j < high; ++j) {
-        if (compareTo(list[j], pivot, traitIndex) <= 0) {
-            i++;
-            swapCats(&list[i], &list[j]);
+    int lowpos = low;
+    ++low;
+
+    while (low <= high) {
+        while (low <= high && compareTo(list[low], list[high], traitIndex) <= 0) {
+            ++low;
         }
+        while (low <= high && compareTo(list[lowpos], list[high], traitIndex) < 0) {
+            --high;;
+        }
+        if (low < high) {
+            swapCats(&list[low], &list[high]);
+            ++low;
+            --high;
+        }
+        swapCats(&list[lowpos], &list[high]);
+        return high;
     }
-    swapCats(&list[i + 1], &list[high]);
-    return i + 1;
 }
 
 void quickSortRec(Cat **list, int low, int high, int traitIndex) {
     if (high - low + 1 <= BASECASESIZE) {
         insertionSort(list, low, high, traitIndex);
     } else {
-        int pivotIndex = partition(list, low, high, traitIndex);
-        quickSortRec(list, low, pivotIndex - 1, traitIndex);
-        quickSortRec(list, pivotIndex + 1, high, traitIndex);
+        int split = partition(list, low, high, traitIndex);
+        quickSortRec(list, low, split - 1, traitIndex);
+        quickSortRec(list, split + 1, high, traitIndex);
     }
 }
 
