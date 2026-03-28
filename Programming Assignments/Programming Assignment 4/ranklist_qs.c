@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 #define MAXSIZE 12
 #define NUMTRAITS 7
@@ -98,7 +97,7 @@ void insertionSort(Cat **list, int low, int high, int traitIndex) {
 
     while (j >= low && compareTo(list[j], tempCat, traitIndex) > 0) {
       list[j + 1] = list[j];
-      j--;
+      --j;;
     }
     list[j + 1] = tempCat;
   }
@@ -126,12 +125,10 @@ int partition(Cat **list, int low, int high, int traitIndex) {
         }
         if (low < high) {
             swapCats(&list[low], &list[high]);
-            ++low;
-            --high;
         }
-        swapCats(&list[lowpos], &list[high]);
-        return high;
     }
+    swapCats(&list[lowpos], &list[high]);
+    return high;
 }
 
 void quickSortRec(Cat **list, int low, int high, int traitIndex) {

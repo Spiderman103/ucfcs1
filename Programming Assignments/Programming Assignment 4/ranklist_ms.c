@@ -96,7 +96,7 @@ void insertionSort(Cat **list, int low, int high, int traitIndex) {
 
         while (j >= low && compareTo(list[j], tempCat, traitIndex) > 0) {
             list[j + 1] = list[j];
-            j--;
+            --j;
         }
         list[j + 1] = tempCat;
     }
@@ -109,7 +109,7 @@ void merge(Cat **list, int left, int mid, int right, int traitIndex) {
     Cat **leftArray = (Cat **)malloc(leftSize * sizeof(Cat *));
     Cat **rightArray = (Cat **)malloc(rightSize * sizeof(Cat *));
     if (leftArray == NULL || rightArray == NULL) {
-        printf("Error: Memory allocation failed during merge.\n");
+        printf("Error: Memory allocation failed.\n");
         return;
     }
 
@@ -127,23 +127,23 @@ void merge(Cat **list, int left, int mid, int right, int traitIndex) {
     while (i < leftSize && j < rightSize) {
         if (compareTo(leftArray[i], rightArray[j], traitIndex) <= 0) {
             list[k] = leftArray[i];
-            i++;
+            ++i;
         } else {
             list[k] = rightArray[j];
-            j++;
+            ++j;
         }
-        k++;
+        ++k;
     }
 
     while (i < leftSize) {
         list[k] = leftArray[i];
-        i++;
-        k++;
+        ++i;
+        ++k;
     }
     while (j < rightSize) {
         list[k] = rightArray[j];
-        j++;
-        k++;
+        ++j;
+        ++k;
     }
 
     free(leftArray);
