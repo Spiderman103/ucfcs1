@@ -22,8 +22,8 @@ typedef struct Cat {
 } Cat;
 
 int compareTo(Cat *ptrC1, Cat *ptrC2, int key);
-void insertionSort(Cat **list, int low, int high, int key);
-void merge(Cat **list, int low, int mid, int high, int key);
+void insertionSort(Cat **list, int low, int high, int key); // Helper function
+void merge(Cat **list, int low, int mid, int high, int key); // Helper function
 void mergeSortRec(Cat **list, int low, int high, int key);
 void mergeSort(Cat **list, int n, int key);
 
@@ -156,7 +156,7 @@ void mergeSortRec(Cat **list, int low, int high, int key) {
       return;
     }
     if (low < high) {
-        int mid = low + (high - low) / 2;
+        int mid = (low + high) / 2;
         mergeSortRec(list, low, mid, key);
         mergeSortRec(list, mid + 1, high, key);
         merge(list, low, mid, high, key);

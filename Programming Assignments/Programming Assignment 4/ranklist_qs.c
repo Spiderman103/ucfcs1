@@ -22,9 +22,9 @@ typedef struct Cat {
 } Cat;
 
 int compareTo(Cat *ptrC1, Cat *ptrC2, int key);
-void insertionSort(Cat **list, int low, int high, int key);
-void swapCats(Cat **a, Cat **b);
-int partition(Cat **list, int low, int high, int key);
+void insertionSort(Cat **list, int low, int high, int key); // Helper function
+void swapCats(Cat **a, Cat **b); // Helper function
+int partition(Cat **list, int low, int high, int key); // Helper function
 void quickSortRec(Cat **list, int low, int high, int key);
 void quickSort(Cat **list, int n, int key);
 
