@@ -1,0 +1,25 @@
+24
+1 Milo Bengal 50 1 0 0 0 1
+1 Charlie Siamese 40 0 1 0 1 0
+1 Zoe Persian 60 1 1 0 0 0
+1 Alice Tabby 30 0 0 1 0 1
+1 Ethan Maine 45 1 0 1 0 0
+1 Noah Sphynx 55 0 1 1 0 0
+1 Yara Ragdoll 65 1 0 0 1 1
+6
+2 Milo
+2 Charlie
+2 Zoe
+2 Alice
+2 Ethan
+2 Noah
+2 Yara
+6
+1 Luna Bengal 50 1 0 0 0 0
+1 Bella Siamese 40 1 0 0 0 0
+1 Oliver Persian 60 1 1 0 0 0
+1 Bella Maine 45 1 1 0 0 0
+1 Oliver Sphynx 70 0 1 0 0 0
+3 1
+3 2
+6

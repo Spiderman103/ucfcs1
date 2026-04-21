@@ -1,0 +1,31 @@
+Insert: 0
+Insert: 1
+Apple Breed 30
+Insert: 1
+Mango Breed 50
+Insert: 2
+Insert: 3
+Cherry Breed 45
+Deletion Complete
+Banana Breed 40
+Peach Breed 60
+Insert: 3
+Insert: 4
+Mango Breed 50
+Deletion Complete
+Cherry Breed 45
+NO SMALLEST ELEMENT FOUND
+Banana 40 4
+Cherry 45 3
+Date 35 2
+Fig 55 1
+Peach 60 5
+Deletion Complete
+Deletion Complete
+Fig Breed 55
+Deletion Complete
+Deletion Complete
+Peach Breed 60
+Deletion Complete
+NO SMALLEST ELEMENT FOUND
+EMPTY
