@@ -138,41 +138,41 @@ int main() {
 }
 
 void swapCats(Cat *a, Cat *b) {
-  Cat temp = *a;
-  *a = *b;
-  *b = temp;
+    Cat temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
 int betterCat(CatHeap *heap, Cat *left, Cat *right) {
-  if (heap->mode == MODE_ADOPTION) {
-    if (left->key > right->key + EPSILON) {
-      return 1;
-    }
-    if (right->key > left->key + EPSILON) {
-      return 0;
-    }
-  } else {
-    if (left->key < right->key - EPSILON) {
-      return 1;
-    }
-    if (right->key < left->key - EPSILON) {
-      return 0;
-    }
-  }
-  int cmpName = strcmp(left->name, right->name);
-  if (cmpName != 0) {
-    if (cmpName < 0) {
-      return 1;
+    if (heap->mode == MODE_ADOPTION) {
+        if (left->key > right->key + EPSILON) {
+            return 1;
+        }
+        if (right->key > left->key + EPSILON) {
+            return 0;
+        }
     } else {
-      return 0;
+        if (left->key < right->key - EPSILON) {
+            return 1;
+        }
+        if (right->key < left->key - EPSILON) {
+            return 0;
+        }
     }
-  }
+    int cmpName = strcmp(left->name, right->name);
+    if (cmpName != 0) {
+        if (cmpName < 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 
-  if (left->arrival_id < right->arrival_id) {
-    return 1;
-  } else {
-    return 0;
-  }
+    if (left->arrival_id < right->arrival_id) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 void percolateUp(CatHeap *heap, int index) {
@@ -206,10 +206,10 @@ void heapify(CatHeap *heap, int index) {
 }
 
 void freeCat(Cat *c) {
-  if (c) {
-    free(c->name);
-    free(c->breed);
-  }
+    if (c) {
+        free(c->name);
+        free(c->breed);
+    }
 }
 
 int find_cat_index(CatHeap *heap, char *name) {
@@ -242,7 +242,7 @@ double compute_triage_key(Cat *c) {
         penalty = 0;
     }
 
-    return (100 - c->health) * (2.0 + penalty * 1.0 - 0.05 * c->friendliness);
+    return (100 - c->health) * 2.0 + (penalty * 1.0) - (0.05 * c->friendliness);
 }
 
 void recompute_all_keys_and_build(Shelter *s) {
@@ -267,7 +267,12 @@ void cmd_add(Shelter *s, char *name, char *breed, int age, int friend1, int heal
 
     if (s->heap.size >= s->heap.capacity) {
         s->heap.capacity = s->heap.capacity * 2;
-        s->heap.arr = (Cat *)realloc(s->heap.arr, s->heap.capacity * sizeof(Cat));
+        Cat *tempArr = (Cat *)realloc(s->heap.arr, s->heap.capacity * sizeof(Cat));
+        if (tempArr == NULL) {
+            printf("Memory allocation failed.\n");
+            return;
+        }
+        s->heap.arr = tempArr;
     }
 
     Cat *newCat = &s->heap.arr[s->heap.size];
@@ -323,7 +328,7 @@ void cmd_update(Shelter *s, char *name, char *field, int new_value) {
             c->key = compute_triage_key(c);
         }
 
-        printf("Updated %s: %s = %d. Priority Adjusted.\n", name, field, new_value);
+        printf("Updated %s: %s=%d. Priority adjusted.\n", name, field, new_value);
     }
     percolateUp(&s->heap, index);
     heapify(&s->heap, index);
@@ -375,7 +380,14 @@ void cmd_serve(Shelter *s) {
     if (s->mode == MODE_TRIAGE) {
         Cat topCat = s->heap.arr[0];
         printf("Serve now: %s (key=%.2lf, name=%s, breed=%s, age=%d, friend=%d, health=%d)\n", topCat.name, topCat.key, topCat.name, topCat.breed, topCat.age, topCat.friendliness, topCat.health);
-        cmd_remove(s, topCat.name);
+        s->heap.arr[0] = s->heap.arr[s->heap.size - 1];
+        --s->heap.size;
+
+        if (s->heap.size > 0) {
+            heapify(&s->heap, 0);
+        }
+        freeCat(&topCat);
+        
     } else {
         Cat *tempCatList = (Cat *)malloc(s->heap.size * sizeof(Cat));
         int tempCatListCount = 0;
@@ -405,6 +417,7 @@ void cmd_serve(Shelter *s) {
             percolateUp(&s->heap, s->heap.size - 1);
         }
         free(tempCatList);
+        
         if (found) {
             printf("Serve now: %s (key=%.2lf, name=%s, breed=%s, age=%d, friend=%d, health=%d)\n", servedCat.name, servedCat.key, servedCat.name, servedCat.breed, servedCat.age, servedCat.friendliness, servedCat.health);
             freeCat(&servedCat);

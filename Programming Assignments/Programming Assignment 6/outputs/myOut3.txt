@@ -4,8 +4,8 @@ Added Hana489.
 [1] Petra1680 (key=178.00, ADOPTION)
 [2] Hana489 (key=112.60, ADOPTION)
 [3] Mittens1825 (key=74.80, ADOPTION)
-Updated Mittens1825: FRIEND = 90. Priority Adjusted.
-Updated Mittens1825: HEALTH = 50. Priority Adjusted.
+Updated Mittens1825: FRIEND=90. Priority adjusted.
+Updated Mittens1825: HEALTH=50. Priority adjusted.
 [1] Mittens1825 (key=193.40, ADOPTION)
 [2] Petra1680 (key=178.00, ADOPTION)
 [3] Hana489 (key=112.60, ADOPTION)
@@ -21,15 +21,13 @@ Serve now: Pumpkin8929 (key=168.80, name=Pumpkin8929, breed=Bengal, age=7, frien
 [1] Mittens1825 (key=193.40, ADOPTION)
 [2] Hana489 (key=112.60, ADOPTION)
 Mode set to TRIAGE. Rebuilding priorities...
-[1] Mittens1825 (key=-125.00, TRIAGE)
-[2] Hana489 (key=19.80, TRIAGE)
+[1] Hana489 (key=70.55, TRIAGE)
+[2] Mittens1825 (key=95.50, TRIAGE)
 Cat Pumpkin8929 not found.
 Added Smokey5515.
 Removed Hana489.
-Serve now: Mittens1825 (key=-125.00, name=Mittens1825, breed=Ragdoll, age=8, friend=90, health=50)
-Removed d1rށU.
-Serve now: Smokey5515 (key=-35.20, name=Smokey5515, breed=DSH, age=2, friend=48, health=12)
-Removed �!rށU.
+Serve now: Mittens1825 (key=95.50, name=Mittens1825, breed=Ragdoll, age=8, friend=90, health=50)
+Serve now: Smokey5515 (key=173.60, name=Smokey5515, breed=DSH, age=2, friend=48, health=12)
 Mode set to ADOPTION. Rebuilding priorities...
 No cats available.
 Featured breed set to DSH with alpha=2.50. Rebuilding priorities...
