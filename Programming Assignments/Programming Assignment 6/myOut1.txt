@@ -1,0 +1,9 @@
+Mode set to ADOPTION. Rebuilding priorities...
+Added cat Coco.
+Added cat Hana.
+Updated Coco: QUARANTINE = 1.
+Updated Hana: QUARANTINE = 1.
+No cats available.
+Cat Hana not found.
+No cats available.
+Featured breed set to Ragdoll with alpha 1.50. Rebuilding priorities...
