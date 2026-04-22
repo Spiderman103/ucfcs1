@@ -44,14 +44,14 @@ int find_cat_index(CatHeap *heap, char *name); // Returns heap index of cat with
 double compute_adoption_key(Cat *c, Shelter *s); // Returns the current adoption-mode key for cat c using S->featured_breed and S->alpha. 
 double compute_triage_key(Cat *c); // Returns the current triage-mode key for cat c. 
 void recompute_all_keys_and_build(Shelter *s); // Recomputes all keys for the active mode and rebuilds heap in O(n) using bottom-up heapify. 
-void cmd_add(Shelter *s, char *name, char *breed, int age, int friend1, int health); // Allocates a new Cat, initializes fields, computes key for active mode, ensures no duplicate name exists (linear scan), and inserts into the heap. 
-void cmd_update(Shelter *s, char *name, char *field, int new_value); // Locate the cat by name using a linear scan of the heap array. If found, update the requested field.
-void cmd_remove(Shelter *s, char *name); // Locate the cat by name using a linear scan of the heap array. Remove it from the heap, restore heap order, and free the Cat.  
+void cmd_add(Shelter *s, char *name, char *breed, int age, int friend1, int health); // Allocates a new Cat, initializes fields, computes key for active mode, and inserts into array. 
+void cmd_update(Shelter *s, char *name, char *field, int new_value); // Locate the cat by name using a linear search of the heap array. If found, update the requested field.
+void cmd_remove(Shelter *s, char *name); // Locate the cat by name using a linear search of the heap array. Remove it from the heap, restore heap order, and free the Cat.  
 void cmd_peek(Shelter *s); // Prints the current top cat for the active mode (does not modify heap). 
 void cmd_serve(Shelter *s); // Serves the highest-priority cat based on the active mode.
 void cmd_mode(Shelter *s, char *mode_str); // Sets S->mode, sets heap mode, then recompute_all_keys_and_build(S). 
 void cmd_featured(Shelter *s, char *breed, double alpha); // Sets (or clears) featured breed and alpha, then recompute_all_keys_and_build(S). 
-void cmd_print(Shelter *s, int k); // Non-destructive: print top k according to active mode. Recommended: copy heap array into a temp heap and extract k from the copy. 
+void cmd_print(Shelter *s, int k); // Prints top k according to active mode. Copies heap array into a temp heap and extract k from the copy. 
 
 // Helper Function Prototypes
 void swapCats(Cat **a, Cat **b);
@@ -148,17 +148,17 @@ void swapCats(Cat **a, Cat **b) {
 
 int betterCat(CatHeap *heap, Cat *left, Cat *right) {
     if (heap->mode == MODE_ADOPTION) {
-        if (left->key > right->key + 1e-9) {
+        if (left->key > right->key) {
             return 1; // 1 if left is higher than the right
         }
-        if (right->key > left->key + 1e-9) {
+        if (right->key > left->key) {
             return 0; // 0 if the right is higher than the left
         }
     } else {
-        if (left->key < right->key - 1e-9) {
+        if (left->key < right->key) {
             return 1;
         }
-        if (right->key < left->key - 1e-9) {
+        if (right->key < left->key) {
             return 0;
         }
     }
