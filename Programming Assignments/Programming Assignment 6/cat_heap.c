@@ -25,7 +25,7 @@ typedef struct Cat {
 } Cat;
 
 typedef struct {
-    Cat *arr;
+    Cat **arr;
     int size;
     int capacity;
     Mode mode;
@@ -53,7 +53,7 @@ void cmd_featured(Shelter *s, char *breed, double alpha);
 void cmd_print(Shelter *s, int k);
 
 // Helper Functions
-void swapCats(Cat *a, Cat *b);
+void swapCats(Cat **a, Cat **b);
 int betterCat(CatHeap *heap, Cat *left, Cat *right);
 void percolateUp(CatHeap *heap, int index);
 void heapify(CatHeap *heap, int index);
@@ -71,7 +71,7 @@ int main() {
     s.heap.size = 0;
     s.heap.capacity = 10;
     s.heap.mode = MODE_ADOPTION;
-    s.heap.arr = (Cat *)malloc(s.heap.capacity * sizeof(Cat));
+    s.heap.arr = (Cat **)malloc(s.heap.capacity * sizeof(Cat *));
 
     if (scanf("%d", &n) != 1) {
         return 0;
@@ -126,7 +126,7 @@ int main() {
         }
     }
     for (int i = 0; i < s.heap.size; ++i) {
-        freeCat(&s.heap.arr[i]);
+        freeCat(s.heap.arr[i]);
     }
     free(s.heap.arr);
     free(s.featured_breed);
@@ -134,8 +134,8 @@ int main() {
     return 0;
 }
 
-void swapCats(Cat *a, Cat *b) {
-    Cat temp = *a;
+void swapCats(Cat **a, Cat **b) {
+    Cat *temp = *a;
     *a = *b;
     *b = temp;
 }
@@ -175,7 +175,7 @@ int betterCat(CatHeap *heap, Cat *left, Cat *right) {
 void percolateUp(CatHeap *heap, int index) {
     while (index > 0) {
         int parent = (index - 1) / 2;
-        if (betterCat(heap, &heap->arr[index], &heap->arr[parent])) {
+        if (betterCat(heap, heap->arr[index], heap->arr[parent])) {
             swapCats(&heap->arr[index], &heap->arr[parent]);
             index = parent;
         } else {
@@ -189,10 +189,10 @@ void heapify(CatHeap *heap, int index) {
     int right = 2 * index + 2;
     int bestOne = index;
 
-    if (left < heap->size && betterCat(heap, &heap->arr[left], &heap->arr[bestOne])) {
+    if (left < heap->size && betterCat(heap, heap->arr[left], heap->arr[bestOne])) {
         bestOne = left;
     }
-    if (right < heap->size && betterCat(heap, &heap->arr[right], &heap->arr[bestOne])) {
+    if (right < heap->size && betterCat(heap, heap->arr[right], heap->arr[bestOne])) {
         bestOne = right;
     }
 
@@ -206,12 +206,13 @@ void freeCat(Cat *c) {
     if (c) {
         free(c->name);
         free(c->breed);
+        free(c);
     }
 }
 
 int find_cat_index(CatHeap *heap, char *name) {
     for (int i = 0; i < heap->size; ++i) {
-        if (strcmp(heap->arr[i].name, name) == 0) {
+        if (strcmp(heap->arr[i]->name, name) == 0) {
             return i;
         }
     }
@@ -245,9 +246,9 @@ double compute_triage_key(Cat *c) {
 void recompute_all_keys_and_build(Shelter *s) {
     for (int i = 0; i < s->heap.size; ++i) {
         if (s->mode == MODE_ADOPTION) {
-            s->heap.arr[i].key = compute_adoption_key(&s->heap.arr[i], s);
+            s->heap.arr[i]->key = compute_adoption_key(s->heap.arr[i], s);
         } else {
-            s->heap.arr[i].key = compute_triage_key(&s->heap.arr[i]);
+            s->heap.arr[i]->key = compute_triage_key(s->heap.arr[i]);
         }
     }
 
@@ -264,7 +265,7 @@ void cmd_add(Shelter *s, char *name, char *breed, int age, int friend1, int heal
 
     if (s->heap.size >= s->heap.capacity) {
         s->heap.capacity = s->heap.capacity * 2;
-        Cat *tempArr = (Cat *)realloc(s->heap.arr, s->heap.capacity * sizeof(Cat));
+        Cat **tempArr = (Cat **)realloc(s->heap.arr, s->heap.capacity * sizeof(Cat *));
         if (tempArr == NULL) {
             printf("Memory allocation failed.\n");
             return;
@@ -272,7 +273,7 @@ void cmd_add(Shelter *s, char *name, char *breed, int age, int friend1, int heal
         s->heap.arr = tempArr;
     }
 
-    Cat *newCat = &s->heap.arr[s->heap.size];
+    Cat *newCat = (Cat *)malloc(sizeof(Cat));
     newCat->name = (char *)malloc((strlen(name) + 1) * sizeof(char));
     strcpy(newCat->name, name);
 
@@ -293,6 +294,7 @@ void cmd_add(Shelter *s, char *name, char *breed, int age, int friend1, int heal
         newCat->key = compute_triage_key(newCat);
     }
 
+    s->heap.arr[s->heap.size] = newCat;
     ++s->heap.size;
     percolateUp(&s->heap, s->heap.size - 1);
     printf("Added %s.\n", name);
@@ -306,7 +308,7 @@ void cmd_update(Shelter *s, char *name, char *field, int new_value) {
         return;
     }
 
-    Cat *c = &s->heap.arr[index];
+    Cat *c = s->heap.arr[index];
     if (strcmp(field, "QUARANTINE") == 0) {
         c->quarantine = new_value;
         printf("Updated %s: QUARANTINE=%d.\n", name, new_value);
@@ -317,6 +319,9 @@ void cmd_update(Shelter *s, char *name, char *field, int new_value) {
             c->friendliness = new_value;
         } else if (strcmp(field, "HEALTH") == 0) {
             c->health = new_value;
+        } else {
+            printf("Unknown field %s.\n", field);
+            return;
         }
 
         if (s->mode == MODE_ADOPTION) {
@@ -328,7 +333,8 @@ void cmd_update(Shelter *s, char *name, char *field, int new_value) {
         printf("Updated %s: %s=%d. Priority adjusted.\n", name, field, new_value);
     }
     percolateUp(&s->heap, index);
-    heapify(&s->heap, index);
+    int newIndex = find_cat_index(&s->heap, name);
+    heapify(&s->heap, newIndex);
 }
 
 void cmd_remove(Shelter *s, char *name) {
@@ -338,7 +344,7 @@ void cmd_remove(Shelter *s, char *name) {
         return;
     }
 
-    freeCat(&s->heap.arr[index]);
+    freeCat(s->heap.arr[index]);
     printf("Removed %s.\n", name);
 
     s->heap.arr[index] = s->heap.arr[s->heap.size - 1];
@@ -356,7 +362,7 @@ void cmd_peek(Shelter *s) {
         return;
     }
 
-    Cat *c = &s->heap.arr[0];
+    Cat *c = s->heap.arr[0];
     char *modeStr;
 
     if (s->mode == MODE_ADOPTION) {
@@ -375,31 +381,31 @@ void cmd_serve(Shelter *s) {
     }
 
     if (s->mode == MODE_TRIAGE) {
-        Cat topCat = s->heap.arr[0];
-        printf("Serve now: %s (key=%.2lf, name=%s, breed=%s, age=%d, friend=%d, health=%d)\n", topCat.name, topCat.key, topCat.name, topCat.breed, topCat.age, topCat.friendliness, topCat.health);
+        Cat *topCat = s->heap.arr[0];
+        printf("Serve now: %s (key=%.2lf, name=%s, breed=%s, age=%d, friend=%d, health=%d)\n", topCat->name, topCat->key, topCat->name, topCat->breed, topCat->age, topCat->friendliness, topCat->health);
         s->heap.arr[0] = s->heap.arr[s->heap.size - 1];
         --s->heap.size;
 
         if (s->heap.size > 0) {
             heapify(&s->heap, 0);
         }
-        freeCat(&topCat);
+        freeCat(topCat);
         
     } else {
-        Cat *tempCatList = (Cat *)malloc(s->heap.size * sizeof(Cat));
+        Cat **tempCatList = (Cat **)malloc(s->heap.size * sizeof(Cat *));
         int tempCatListCount = 0;
-        Cat servedCat;
+        Cat *servedCat = NULL;
         int found = 0;
 
         while (s->heap.size > 0) {
-            Cat topCat = s->heap.arr[0];
+            Cat *topCat = s->heap.arr[0];
             s->heap.arr[0] = s->heap.arr[s->heap.size - 1];
             --s->heap.size;
             if (s->heap.size > 0) {
                 heapify(&s->heap, 0);
             }
             
-            if (topCat.quarantine == 0) {
+            if (topCat->quarantine == 0) {
                 servedCat = topCat;
                 found = 1;
                 break;
@@ -416,8 +422,8 @@ void cmd_serve(Shelter *s) {
         free(tempCatList);
         
         if (found) {
-            printf("Serve now: %s (key=%.2lf, name=%s, breed=%s, age=%d, friend=%d, health=%d)\n", servedCat.name, servedCat.key, servedCat.name, servedCat.breed, servedCat.age, servedCat.friendliness, servedCat.health);
-            freeCat(&servedCat);
+            printf("Serve now: %s (key=%.2lf, name=%s, breed=%s, age=%d, friend=%d, health=%d)\n", servedCat->name, servedCat->key, servedCat->name, servedCat->breed, servedCat->age, servedCat->friendliness, servedCat->health);
+            freeCat(servedCat);
         } else {
             printf("No adoptable cats available.\n");
         }
@@ -461,7 +467,7 @@ void cmd_print(Shelter *s, int k) {
     tempHeap.capacity = s->heap.size;
     tempHeap.size = s->heap.size;
     tempHeap.mode = s->heap.mode;
-    tempHeap.arr = (Cat *)malloc(tempHeap.size * sizeof(Cat));
+    tempHeap.arr = (Cat **)malloc(tempHeap.size * sizeof(Cat *));
     for (int i = 0; i < s->heap.size; ++i) {
         tempHeap.arr[i] = s->heap.arr[i];
     }
@@ -482,8 +488,8 @@ void cmd_print(Shelter *s, int k) {
     }
 
     for (int i = 0; i < count; ++i) {
-        Cat topCat = tempHeap.arr[0];
-        printf("[%d] %s (key=%.2lf, %s)\n", i + 1, topCat.name, topCat.key, modeStr);
+        Cat *topCat = tempHeap.arr[0];
+        printf("[%d] %s (key=%.2lf, %s)\n", i + 1, topCat->name, topCat->key, modeStr);
 
         tempHeap.arr[0] = tempHeap.arr[tempHeap.size - 1];
         --tempHeap.size;
