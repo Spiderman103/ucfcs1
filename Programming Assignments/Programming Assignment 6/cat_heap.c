@@ -7,9 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define INITIAL_CAPACITY 10 
-#define MAX_NAME 25
-#define EPSILON 1e-9
 
 typedef enum {
     MODE_ADOPTION = 0,
@@ -72,7 +69,7 @@ int main() {
     s.next_arrival_id = 0;
 
     s.heap.size = 0;
-    s.heap.capacity = INITIAL_CAPACITY;
+    s.heap.capacity = 10;
     s.heap.mode = MODE_ADOPTION;
     s.heap.arr = (Cat *)malloc(s.heap.capacity * sizeof(Cat));
 
@@ -81,30 +78,30 @@ int main() {
     }
 
     for (int i = 0; i < n; ++i) {
-        char command[MAX_NAME];
+        char command[26];
         if (scanf("%s", command) != 1) {
             break;
         }
 
         if (strcmp(command, "ADD") == 0) {
-            char name[MAX_NAME];
-            char breed[MAX_NAME];
+            char name[26];
+            char breed[26];
 
             int age;
-            int friend;
+            int friend1;
             int health;
 
-            scanf("%s %s %d %d %d", name, breed, &age, &friend, &health);
-            cmd_add(&s, name, breed, age, friend, health);
+            scanf("%s %s %d %d %d", name, breed, &age, &friend1, &health);
+            cmd_add(&s, name, breed, age, friend1, health);
         } else if (strcmp(command, "UPDATE") == 0) {
-            char name[MAX_NAME];
-            char field[MAX_NAME];
+            char name[26];
+            char field[26];
             int val;
 
             scanf("%s %s %d", name, field, &val);
             cmd_update(&s, name, field, val);
         } else if (strcmp(command, "REMOVE") == 0) {
-            char name[MAX_NAME];
+            char name[26];
             scanf("%s", name);
             cmd_remove(&s, name);
         } else if (strcmp(command, "PEEK") == 0) {
@@ -112,11 +109,11 @@ int main() {
         } else if (strcmp(command, "SERVE") == 0) {
             cmd_serve(&s);
         } else if (strcmp(command, "MODE") == 0) {
-            char mode[MAX_NAME];
+            char mode[26];
             scanf("%s", mode);
             cmd_mode(&s, mode);
         } else if (strcmp(command, "FEATURED") == 0) {
-            char breed[MAX_NAME];
+            char breed[26];
             double alpha;
             scanf("%s %lf", breed, &alpha);
             cmd_featured(&s, breed, alpha);
@@ -145,17 +142,17 @@ void swapCats(Cat *a, Cat *b) {
 
 int betterCat(CatHeap *heap, Cat *left, Cat *right) {
     if (heap->mode == MODE_ADOPTION) {
-        if (left->key > right->key + EPSILON) {
+        if (left->key > right->key + 1e-9) {
             return 1;
         }
-        if (right->key > left->key + EPSILON) {
+        if (right->key > left->key + 1e-9) {
             return 0;
         }
     } else {
-        if (left->key < right->key - EPSILON) {
+        if (left->key < right->key - 1e-9) {
             return 1;
         }
-        if (right->key < left->key - EPSILON) {
+        if (right->key < left->key - 1e-9) {
             return 0;
         }
     }
