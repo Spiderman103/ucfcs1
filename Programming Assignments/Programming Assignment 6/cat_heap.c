@@ -39,20 +39,21 @@ typedef struct {
     CatHeap heap;
 } Shelter;
 
-int find_cat_index(CatHeap *heap, char *name);
-double compute_adoption_key(Cat *c, Shelter *s);
-double compute_triage_key(Cat *c);
-void recompute_all_keys_and_build(Shelter *s);
-void cmd_add(Shelter *s, char *name, char *breed, int age, int friend1, int health);
-void cmd_update(Shelter *s, char *name, char *field, int new_value);
-void cmd_remove(Shelter *s, char *name);
-void cmd_peek(Shelter *s);
-void cmd_serve(Shelter *s);
-void cmd_mode(Shelter *s, char *mode_str);
-void cmd_featured(Shelter *s, char *breed, double alpha);
-void cmd_print(Shelter *s, int k);
+// Function Prototypes
+int find_cat_index(CatHeap *heap, char *name); // Returns heap index of cat with given name, or -1 if not found 
+double compute_adoption_key(Cat *c, Shelter *s); // Returns the current adoption-mode key for cat c using S->featured_breed and S->alpha. 
+double compute_triage_key(Cat *c); // Returns the current triage-mode key for cat c. 
+void recompute_all_keys_and_build(Shelter *s); // Recomputes all keys for the active mode and rebuilds heap in O(n) using bottom-up heapify. 
+void cmd_add(Shelter *s, char *name, char *breed, int age, int friend1, int health); // Allocates a new Cat, initializes fields, computes key for active mode, ensures no duplicate name exists (linear scan), and inserts into the heap. 
+void cmd_update(Shelter *s, char *name, char *field, int new_value); // Locate the cat by name using a linear scan of the heap array. If found, update the requested field.
+void cmd_remove(Shelter *s, char *name); // Locate the cat by name using a linear scan of the heap array. Remove it from the heap, restore heap order, and free the Cat.  
+void cmd_peek(Shelter *s); // Prints the current top cat for the active mode (does not modify heap). 
+void cmd_serve(Shelter *s); // Serves the highest-priority cat based on the active mode.
+void cmd_mode(Shelter *s, char *mode_str); // Sets S->mode, sets heap mode, then recompute_all_keys_and_build(S). 
+void cmd_featured(Shelter *s, char *breed, double alpha); // Sets (or clears) featured breed and alpha, then recompute_all_keys_and_build(S). 
+void cmd_print(Shelter *s, int k); // Non-destructive: print top k according to active mode. Recommended: copy heap array into a temp heap and extract k from the copy. 
 
-// Helper Functions
+// Helper Function Prototypes
 void swapCats(Cat **a, Cat **b);
 int betterCat(CatHeap *heap, Cat *left, Cat *right);
 void percolateUp(CatHeap *heap, int index);
@@ -63,20 +64,24 @@ int main() {
     Shelter s;
     int n;
 
+    // Giving shelter default starting values
     s.mode = MODE_ADOPTION;
     s.featured_breed = NULL;
     s.alpha = 1.0;
     s.next_arrival_id = 0;
 
+    // Giving heap in Shelter starting capacity of 10
     s.heap.size = 0;
     s.heap.capacity = 10;
     s.heap.mode = MODE_ADOPTION;
     s.heap.arr = (Cat **)malloc(s.heap.capacity * sizeof(Cat *));
 
     if (scanf("%d", &n) != 1) {
+        free(s.heap.arr);
         return 0;
     }
 
+    // Reading and storing all comamnds
     for (int i = 0; i < n; ++i) {
         char command[26];
         if (scanf("%s", command) != 1) {
@@ -125,6 +130,7 @@ int main() {
             break;
         }
     }
+    // Freeing all cats and strings.
     for (int i = 0; i < s.heap.size; ++i) {
         freeCat(s.heap.arr[i]);
     }
@@ -143,10 +149,10 @@ void swapCats(Cat **a, Cat **b) {
 int betterCat(CatHeap *heap, Cat *left, Cat *right) {
     if (heap->mode == MODE_ADOPTION) {
         if (left->key > right->key + 1e-9) {
-            return 1;
+            return 1; // 1 if left is higher than the right
         }
         if (right->key > left->key + 1e-9) {
-            return 0;
+            return 0; // 0 if the right is higher than the left
         }
     } else {
         if (left->key < right->key - 1e-9) {
@@ -202,6 +208,7 @@ void heapify(CatHeap *heap, int index) {
     }
 }
 
+// Freeing all memory of a Cat
 void freeCat(Cat *c) {
     if (c) {
         free(c->name);
@@ -219,17 +226,18 @@ int find_cat_index(CatHeap *heap, char *name) {
     return -1;
 }
 
+// Calculating adoption key for cat.
 double compute_adoption_key(Cat *c, Shelter *s) {
     double base = (1.6 * c->friendliness) + (1.1 * c->health) - (0.7 * c->age);
     double factor = 0.0;
 
     if (s->featured_breed && strcmp(c->breed, s->featured_breed) == 0) {
-        factor = s->alpha;
+        factor = s->alpha; // Featured breed gets multiplied by alpha
     } else {
-        factor = 1.0;
+        factor = 1.0; // 1.0 if not a featured breed
     }
     
-    return (base * factor) - (0.000001 * c->arrival_id);
+    return (base * factor) - (1e-6 * c->arrival_id);
 }
 
 double compute_triage_key(Cat *c) {
@@ -264,8 +272,8 @@ void cmd_add(Shelter *s, char *name, char *breed, int age, int friend1, int heal
     }
 
     if (s->heap.size >= s->heap.capacity) {
-        s->heap.capacity = s->heap.capacity * 2;
-        Cat **tempArr = (Cat **)realloc(s->heap.arr, s->heap.capacity * sizeof(Cat *));
+        s->heap.capacity = s->heap.capacity * 2; // Doubling heap's capacity if full.
+        Cat **tempArr = (Cat **)realloc(s->heap.arr, s->heap.capacity * sizeof(Cat *)); // realloc call for when heap is full.
         if (tempArr == NULL) {
             printf("Memory allocation failed.\n");
             return;

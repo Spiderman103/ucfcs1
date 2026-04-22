@@ -1,0 +1,46 @@
+Added Bella.
+Added Max.
+Added Luna.
+Added Charlie.
+Added Milo.
+Added Lucy.
+Added Leo.
+Added Chloe.
+Added Jack.
+Added Lily.
+Added Oliver.
+Added Simba.
+Added Nala.
+Name Bella already exists.
+Cat Ghost not found.
+Cat Ghost not found.
+Top[ADOPTION]: [ADOPTION] (key=269.30, name=Nala, breed=Siamese, age=1, friend=100, health=100)
+Updated Max: QUARANTINE=1.
+Updated Luna: QUARANTINE=1.
+Updated Charlie: QUARANTINE=1.
+Serve now: Nala (key=269.30, name=Nala, breed=Siamese, age=1, friend=100, health=100)
+Featured breed set to Siamese with alpha=2.50. Rebuilding priorities...
+Top[ADOPTION]: [ADOPTION] (key=562.25, name=Bella, breed=Siamese, age=3, friend=80, health=90)
+Mode set to TRIAGE. Rebuilding priorities...
+Top[TRIAGE]: [TRIAGE] (key=5.25, name=Milo, breed=Sphynx, age=1, friend=95, health=95)
+Serve now: Milo (key=5.25, name=Milo, breed=Sphynx, age=1, friend=95, health=95)
+Mode set to ADOPTION. Rebuilding priorities...
+Featured breed cleared. Rebuilding priorities...
+[1] Luna (key=236.10, ADOPTION)
+[2] Simba (key=234.60, ADOPTION)
+[3] Bella (key=224.90, ADOPTION)
+[4] Leo (key=219.10, ADOPTION)
+[5] Oliver (key=208.30, ADOPTION)
+Removed Luna.
+Removed Simba.
+[1] Bella (key=224.90, ADOPTION)
+[2] Leo (key=219.10, ADOPTION)
+[3] Oliver (key=208.30, ADOPTION)
+[4] Charlie (key=205.20, ADOPTION)
+[5] Jack (key=182.70, ADOPTION)
+[6] Max (key=169.50, ADOPTION)
+[7] Lily (key=160.50, ADOPTION)
+[8] Lucy (key=141.80, ADOPTION)
+[9] Chloe (key=113.40, ADOPTION)
+Updated Max: QUARANTINE=0.
+Serve now: Bella (key=224.90, name=Bella, breed=Siamese, age=3, friend=80, health=90)
